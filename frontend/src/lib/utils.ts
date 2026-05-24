@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 export const PROXY_URL = '/api/proxy';
 
 export async function fetchAPI(endpoint: string, options: RequestInit = {}) {
@@ -18,7 +18,7 @@ export async function fetchAPI(endpoint: string, options: RequestInit = {}) {
   };
 
   const useProxy = typeof window !== 'undefined';
-  const url = useProxy ? `${PROXY_URL}${endpoint}` : `${API_URL}${endpoint}`;
+  const url = useProxy ? `${PROXY_URL}${endpoint}` : `${API_URL}/api${endpoint}`;
 
   try {
     const response = await fetch(url, {

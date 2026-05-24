@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 type RouteParams = { params: Promise<{ path: string[] }> };
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { path } = await params;
   const fullPath = Array.isArray(path) ? path.join('/') : path;
-  const url = `${API_URL}/${fullPath}${request.nextUrl.search}`;
+  const url = `${API_URL}/api/${fullPath}${request.nextUrl.search}`;
   const authHeader = request.headers.get('authorization');
 
   try {
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function POST(request: NextRequest, { params }: RouteParams) {
   const { path } = await params;
   const fullPath = Array.isArray(path) ? path.join('/') : path;
-  const url = `${API_URL}/${fullPath}`;
+  const url = `${API_URL}/api/${fullPath}`;
   const authHeader = request.headers.get('authorization');
   let body: unknown;
 
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   const { path } = await params;
   const fullPath = Array.isArray(path) ? path.join('/') : path;
-  const url = `${API_URL}/${fullPath}`;
+  const url = `${API_URL}/api/${fullPath}`;
   const authHeader = request.headers.get('authorization');
   let body: unknown;
 
@@ -86,7 +86,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   const { path } = await params;
   const fullPath = Array.isArray(path) ? path.join('/') : path;
-  const url = `${API_URL}/${fullPath}`;
+  const url = `${API_URL}/api/${fullPath}`;
   const authHeader = request.headers.get('authorization');
 
   try {
