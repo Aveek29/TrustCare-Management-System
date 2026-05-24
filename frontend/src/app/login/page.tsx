@@ -134,7 +134,7 @@ function LoginForm() {
             )}
           </div>
           
-          {(!googleReady || googleLoading) && typeof window !== 'undefined' && (
+          {(!googleReady || googleLoading) && (
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t" style={{ borderColor: 'var(--border)' }} />
