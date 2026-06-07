@@ -112,19 +112,22 @@ const skillsList = [
   'Respiratory Care', 'Occupational Therapy', 'Speech Therapy', 'Nutritional Care'
 ];
 
-const firstNames = [
-  'Amit', 'Priya', 'Rajesh', 'Sunita', 'Vikram', 'Anjali', 'Sanjay', 'Meera',
-  'Raj', 'Kavita', 'Deepak', 'Rani', 'Arun', 'Pooja', 'Mahesh', 'Lakshmi',
-  'Suresh', 'Kamala', 'Ravi', 'Divya', 'Nitin', 'Swati', 'Vijay', 'Anita',
-  'Dinesh', 'Geeta', 'Ashok', 'Usha', 'Gopal', 'Shanti', 'Harish', 'Neeta',
-  'Vijay', 'Sunita', 'Ramesh', 'Padma', 'Krishna', 'Gita', 'Madhav', 'Sita',
-  'Bharat', 'Sita', 'Gaurav', 'Aarti', 'Manish', 'Rita', 'Vijay', 'Sunita',
-  'Rahul', 'Nikita', 'Sahil', 'Sonam', 'Vikas', 'Ritu', 'Akshay', 'Ankita'
-];
-
-const lastNames = [
-  'Sharma', 'Patel', 'Singh', 'Gupta', 'Kumar', 'Verma', 'Reddy', 'Joshi',
-  'Shah', 'Mehta', 'Chopra', 'Kapoor', 'Malhotra', 'Khan', 'Ahmed', 'Ali'
+const fullNamePool = [
+  'Amit Sharma', 'Priya Patel', 'Rajesh Singh', 'Sunita Gupta', 'Vikram Verma',
+  'Anjali Reddy', 'Sanjay Joshi', 'Meera Kapoor', 'Raj Malhotra', 'Kavita Shah',
+  'Deepak Mehta', 'Arun Kumar', 'Pooja Chopra', 'Mahesh Patel', 'Lakshmi Iyer',
+  'Suresh Nair', 'Ravi Deshmukh', 'Divya Srinivasan', 'Nitin Agarwal', 'Swati Menon',
+  'Vijay Raj', 'Anita Mishra', 'Dinesh Pandey', 'Geeta Saxena', 'Ashok Thakur',
+  'Usha Bhardwaj', 'Gopal Tiwari', 'Shanti Chauhan', 'Harish Rawat', 'Neeta Bisht',
+  'Rameshwar Pandit', 'Padma Lakshmi', 'Krishna Moorthy', 'Madhavan Pillai',
+  'Gaurav Sinha', 'Aarti Desai', 'Manish Kulkarni', 'Rita Ganguly', 'Rahul Bose',
+  'Nikita Sen', 'Sahil Khan', 'Sonam Kapoor', 'Vikas Ahuja', 'Ritu Agarwal',
+  'Akshay Jain', 'Ankita Roy', 'Rohit Chatterjee', 'Kiran Bedi', 'Aditya Nehru',
+  'Neha Saxena', 'Vivek Oberoi', 'Sonia Das', 'Pranav Ghosh', 'Isha Banerjee',
+  'Karan Johar', 'Shruti Haasan', 'Arvind Swamy', 'Deepika Padukone',
+  'Hrithik Roshan', 'Kareena Kapoor', 'Ranbir Singh', 'Katrina Kaif',
+  'Ajay Devgn', 'Kajol Mukherjee', 'Aamir Khan', 'Kiran Rao',
+  'Shah Rukh Khan', 'Gauri Khan', 'Akshay Kumar', 'Twinkle Khanna',
 ];
 
 const bios = [
@@ -158,6 +161,13 @@ const availabilityPatterns = [
   { monday: true, tuesday: true, wednesday: false, thursday: true, friday: true, saturday: false, sunday: false },
   { monday: true, tuesday: true, wednesday: true, thursday: true, friday: true, saturday: true, sunday: true }
 ];
+
+let nameIndex = 0;
+function nextName(namePool: string[]): string {
+  const name = namePool[nameIndex % namePool.length];
+  nameIndex++;
+  return name;
+}
 
 function randomChoice(arr: any[]) {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -200,7 +210,7 @@ async function seed() {
     const customers = [];
     for (let i = 0; i < 100; i++) {
       const location = randomChoice(locations);
-      const name = i === 0 ? 'Rajesh Kumar' : `${randomChoice(firstNames)} ${randomChoice(lastNames)}`;
+      const name = i === 0 ? 'Rajesh Kumar' : nextName(fullNamePool);
       const email = i === 0 ? 'rajesh.kumar@caresphere.in' : `customer${i + 1}@example.com`;
       customers.push({
         name,
@@ -227,7 +237,7 @@ async function seed() {
       const baseRating = Math.random() * 2 + 3;
       const rating = Math.round(baseRating * 10) / 10;
       
-      const name = i === 0 ? 'Priya Sharma' : `${randomChoice(firstNames)} ${randomChoice(lastNames)}`;
+      const name = i === 0 ? 'Priya Sharma' : nextName(fullNamePool);
       const email = i === 0 ? 'priya.sharma@caresphere.com' : `caregiver${i + 1}@example.com`;
       const caregiver = {
         name,
@@ -305,11 +315,12 @@ async function seed() {
     console.log(`Created ${createdBookings.length} bookings`);
 
     const payments = [];
+    let txnCounter = 0;
     for (const booking of createdBookings) {
       if (booking.paymentStatus !== 'PENDING') {
         payments.push({
           bookingId: booking._id,
-          transactionId: `TXN${Date.now()}${Math.floor(Math.random() * 10000)}`,
+          transactionId: `TXN${Date.now()}${++txnCounter}`,
           amount: booking.totalAmount,
           status: booking.paymentStatus === 'PAID_OUT' ? 'RELEASED' : 
                   booking.paymentStatus === 'REFUNDED' ? 'REFUNDED' : 'ESCROW',

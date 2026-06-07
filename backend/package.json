@@ -7,6 +7,9 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "seed": "ts-node -r tsconfig-paths/register src/scripts/seed.ts",
+    "seed:prod": "node dist/scripts/seed.js",
+    "seed-aggregator": "ts-node -r tsconfig-paths/register src/scripts/seedAggregator.ts",
+    "seed-aggregator:prod": "node dist/scripts/seedAggregator.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "commonjs",
@@ -20,14 +23,18 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.5.0",
     "bcryptjs": "^3.0.3",
+    "bullmq": "^5.78.0",
+    "cheerio": "^1.2.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "ioredis": "^5.11.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.3.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "ts-node-dev": "^2.0.0"

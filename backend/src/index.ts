@@ -5,6 +5,7 @@ import cors from 'cors';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/users';
 import caregiverRoutes from './routes/caregivers';
+import realtimeSearchRoutes from './routes/realtimeSearch';
 import bookingRoutes from './routes/bookings';
 import reviewRoutes from './routes/reviews';
 import recommendRoutes from './routes/recommend';
@@ -12,6 +13,10 @@ import chatRoutes from './routes/chat';
 import paymentRoutes from './routes/payments';
 import adminRoutes from './routes/admin';
 import logsRoutes from './routes/logs';
+import { publicRouter as aggregatorPublicRouter } from './modules/healthcareAggregator/routes/publicRoutes';
+import { adminRouter as aggregatorAdminRouter } from './modules/healthcareAggregator/routes/adminRoutes';
+import { initializeQueues } from './modules/healthcareAggregator/queues/queueSetup';
+import { initializeWorkers } from './modules/healthcareAggregator/workers';
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
@@ -38,6 +43,7 @@ app.use(express.json({ limit: '10kb' }));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/caregivers', caregiverRoutes);
+app.use('/api/search', realtimeSearchRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/recommend', recommendRoutes);
@@ -45,6 +51,9 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/logs', logsRoutes);
+
+app.use('/api/aggregator', aggregatorPublicRouter);
+app.use('/api/admin/aggregator', aggregatorAdminRouter);
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -70,6 +79,13 @@ const connectWithRetry = async () => {
     });
     if (process.env.NODE_ENV !== 'production') {
       console.log('MongoDB connected');
+    }
+    const queues = await initializeQueues();
+    if (queues.discoveryQueue) {
+      initializeWorkers();
+      console.log('Healthcare Aggregator initialized');
+    } else {
+      console.log('Healthcare Aggregator skipped (Redis unavailable)');
     }
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error';

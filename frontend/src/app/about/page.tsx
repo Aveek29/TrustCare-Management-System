@@ -4,14 +4,14 @@ import { Navigation } from '@/components/Navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
-import { Heart, Shield, Zap, Globe, Mail, Github, Code, Database, Smartphone, Brain, Palette, Lock, CreditCard } from 'lucide-react';
+import { Heart, Shield, Zap, Globe, Mail, Github, Code, Database, Smartphone, Palette, Lock, CreditCard } from 'lucide-react';
 
 const teamMembers = [
   {
     name: 'Aveek Patel',
     role: 'Creator & Developer',
-    description: 'Architect of CareSphere - Built the ML Pipeline, auto-ordering script, and Database Architecture. Passionate about using AI to connect families with perfect caregivers.',
-    skills: ['MongoDB', 'ML Pipeline', 'Database Design', 'Express.js', 'System Architecture'],
+    description: 'Architect of CareSphere - Built the Web Scraping Engine, real-time data pipeline, and Database Architecture. Passionate about using data to connect families with perfect caregivers.',
+    skills: ['MongoDB', 'Web Scraping', 'Database Design', 'Express.js', 'System Architecture'],
     icon: Database,
     color: 'from-blue-500 to-cyan-500',
     github: 'https://github.com/Aveek29',
@@ -43,7 +43,7 @@ const teamMembers = [
 ];
 
 const contributions = [
-  { member: 'Aveek', tasks: ['MongoDB Schema Design', 'ML Recommendation Engine', 'Seed Data Script', 'API Architecture'], color: 'from-blue-500 to-cyan-500' },
+  { member: 'Aveek', tasks: ['MongoDB Schema Design', 'Web Scraping Engine', 'Seed Data Script', 'API Architecture'], color: 'from-blue-500 to-cyan-500' },
   { member: 'Amisha Jindal', tasks: ['Interactive UI/UX', 'Framer Motion Animations', 'Responsive Design', 'AI Chatbot Enhancement'], color: 'from-purple-500 to-pink-500' },
   { member: 'Anushka Singhal', tasks: ['JWT Authentication', 'Payment Escrow System', 'Admin Dashboard', 'User Management'], color: 'from-green-500 to-emerald-500' }
 ];
@@ -51,7 +51,7 @@ const contributions = [
 const values = [
   { icon: Heart, title: 'Compassion First', description: 'We believe in the power of care and empathy to transform lives.' },
   { icon: Shield, title: 'Trust & Safety', description: 'Every caregiver is verified, every transaction is secure, every family is protected.' },
-  { icon: Zap, title: 'Innovation', description: 'Using cutting-edge ML and AI to create perfect caregiver matches.' },
+  { icon: Zap, title: 'Innovation', description: 'Using cutting-edge web scraping and real-time data to find the best care options.' },
   { icon: Globe, title: 'Accessibility', description: 'Quality care should be available to everyone, everywhere.' }
 ];
 
@@ -88,7 +88,7 @@ export default function AboutPage() {
             Connecting Hearts, Building Trust
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            CareSphere is an intelligent caregiver booking platform powered by advanced ML algorithms.
+            CareSphere is an intelligent caregiver booking platform powered by real-time web scraping.
             We connect families with verified, compassionate caregivers who provide exceptional care.
           </p>
         </motion.div>
@@ -267,11 +267,11 @@ export default function AboutPage() {
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             Our platform leverages cutting-edge technology to deliver the best caregiver matching experience.
-            From ML-powered recommendations to secure escrow payments, we've thought of everything.
+            From real-time web scraping to secure escrow payments, we've thought of everything.
           </p>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { title: 'ML Recommendations', desc: 'Smart matching based on location, skills, and preferences', icon: Brain },
+              { title: 'Web Scraping', desc: 'Real-time data from OpenStreetMap, Wikidata & global sources', icon: Globe },
               { title: 'Secure Payments', desc: 'Escrow protection for both families and caregivers', icon: CreditCard },
               { title: 'Verified Profiles', desc: 'Rigorous background checks for your peace of mind', icon: Shield }
             ].map((feature, i) => (

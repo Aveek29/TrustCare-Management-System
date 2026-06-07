@@ -12,6 +12,7 @@ import { ThemeToggle } from '@/components/ThemeProvider';
 const navigation = [
   { name: 'Home', href: '/' },
   { name: 'Find Caregivers', href: '/caregivers' },
+  { name: 'Find Facilities', href: '/facilities' },
   { name: 'About', href: '/about' },
 ];
 

@@ -13,7 +13,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
     const query: any = { isVerified: true };
     
     if (skills) {
-      const skillList = (skills as string).split(',');
+      const skillList = (skills as string).split(',').map(s => new RegExp(s.trim(), 'i'));
       query.skills = { $in: skillList };
     }
     

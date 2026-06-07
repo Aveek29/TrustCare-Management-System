@@ -55,3 +55,45 @@ MongoDB connected
 [Chat Config] GROQ_API_KEY present: true, starts with mock: false, length: 56, useGroq: true
 [Chat Debug] useGroq: true, hasKey: true, keyPrefix: gsk_z
 [2026-06-07T09:35:50.296Z] Groq response sent successfully
+[2026-06-07T10:20:06.656Z] Fetching caregivers with filters: [Object: null prototype] {}
+[2026-06-07T10:20:08.831Z] Found 50 caregivers
+[2026-06-07T10:20:08.986Z] Fetching caregivers with filters: [Object: null prototype] {}
+[2026-06-07T10:20:11.261Z] Found 50 caregivers
+[2026-06-07T10:20:54.890Z] Login attempt for: ajesh.kumar@caresphere.in
+[2026-06-07T10:20:54.933Z] Login failed - user not found: ajesh.kumar@caresphere.in
+[2026-06-07T10:21:05.649Z] Login attempt for: rajesh.kumar@caresphere.in
+[2026-06-07T10:21:10.806Z] Login failed - invalid password for: rajesh.kumar@caresphere.in
+[2026-06-07T10:21:30.192Z] Login attempt for: rajesh.kumar@caresphere.in
+[2026-06-07T10:21:30.883Z] Login successful for: rajesh.kumar@caresphere.in, role: CUSTOMER, ID: 6a253a545e1f668100d6bbe8
+[2026-06-07T10:21:37.801Z] Fetching caregivers with filters: [Object: null prototype] {}
+[2026-06-07T10:21:40.353Z] Found 50 caregivers
+[2026-06-07T10:21:41.605Z] Fetching caregivers with filters: [Object: null prototype] {}
+[2026-06-07T10:21:43.666Z] Found 50 caregivers
+[2026-06-07T11:05:47.158Z] Fetching caregivers with filters: [Object: null prototype] { skills: '', available: '' }
+[2026-06-07T11:05:48.421Z] Found 50 caregivers
+[2026-06-07T11:06:07.876Z] Fetching caregivers with filters: [Object: null prototype] {
+  q: 'Child Care',
+  skills: 'Child Care',
+  available: ''
+}
+[2026-06-07T11:06:08.154Z] Found 12 caregivers
+[2026-06-07T11:06:11.955Z] Fetching caregivers with filters: [Object: null prototype] {
+  q: 'Child Care',
+  skills: 'Child Care',
+  available: 'true'
+}
+[2026-06-07T11:06:12.164Z] Found 10 caregivers
+[2026-06-07T11:06:13.796Z] Fetching caregivers with filters: [Object: null prototype] {
+  q: 'Child Care',
+  skills: 'Child Care',
+  available: ''
+}
+[2026-06-07T11:06:14.021Z] Found 12 caregivers
+[2026-06-07T11:06:21.146Z] Fetching caregivers with filters: [Object: null prototype] { skills: '', available: '' }
+[2026-06-07T11:06:24.274Z] Found 50 caregivers
+[2026-06-07T11:10:04.655Z] Fetching caregivers with filters: [Object: null prototype] { skills: '', available: '' }
+[2026-06-07T11:10:05.442Z] Found 50 caregivers
+[2026-06-07T11:10:28.956Z] Fetching caregivers with filters: [Object: null prototype] { skills: '', available: '' }
+[2026-06-07T11:10:30.863Z] Found 50 caregivers
+[2026-06-07T11:10:31.368Z] Fetching caregivers with filters: [Object: null prototype] { skills: '', available: '' }
+[2026-06-07T11:10:34.098Z] Found 50 caregivers
