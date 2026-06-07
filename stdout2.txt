@@ -1,0 +1,33 @@
+[dotenv@17.3.1] injecting env (6) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+Server running on port 5000
+MongoDB connected
+[2026-06-07T08:56:36.087Z] Login attempt for: customer1@example.com
+[2026-06-07T08:56:36.278Z] Login successful for: customer1@example.com, role: CUSTOMER, ID: 6a2523ce1826acd929309fb8
+[2026-06-07T08:56:46.224Z] Fetching caregivers with filters: [Object: null prototype] {}
+[2026-06-07T08:56:47.810Z] Found 50 caregivers
+[2026-06-07T08:56:47.896Z] Fetching caregivers with filters: [Object: null prototype] {}
+[2026-06-07T08:56:49.364Z] Found 50 caregivers
+[2026-06-07T08:56:52.687Z] Fetching caregivers with filters: [Object: null prototype] {}
+[2026-06-07T08:56:54.149Z] Found 50 caregivers
+[2026-06-07T08:56:54.233Z] Fetching caregivers with filters: [Object: null prototype] {}
+[2026-06-07T08:56:54.688Z] Found 50 caregivers
+[2026-06-07T08:57:21.932Z] Login attempt for: caregiver1@example.com
+[2026-06-07T08:57:22.140Z] Login successful for: caregiver1@example.com, role: CAREGIVER, ID: 6a2523ce1826acd92930a01d
+[2026-06-07T08:57:49.331Z] Chat message received: hey hey hye... (lang: en)
+[Chat Config] GROQ_API_KEY present: true, starts with mock: false, length: 56, useGroq: true
+[Chat Debug] useGroq: true, hasKey: true, keyPrefix: gsk_z
+[2026-06-07T08:57:49.738Z] Groq response sent successfully
+[2026-06-07T09:24:39.438Z] Login attempt for: rajesh.kumar@caresphere.in
+[2026-06-07T09:24:39.477Z] Login failed - user not found: rajesh.kumar@caresphere.in
+[2026-06-07T09:24:40.943Z] Login attempt for: rajesh.kumar@caresphere.in
+[2026-06-07T09:24:40.978Z] Login failed - user not found: rajesh.kumar@caresphere.in
+[2026-06-07T09:24:54.811Z] Login attempt for: rajesh.kumar@caresphere.in
+[2026-06-07T09:24:54.847Z] Login failed - user not found: rajesh.kumar@caresphere.in
+[2026-06-07T09:27:03.687Z] Login attempt for: rajesh.kumar@caresphere.in
+[2026-06-07T09:27:03.724Z] Login failed - user not found: rajesh.kumar@caresphere.in
+[2026-06-07T09:31:29.870Z] Login attempt for: admin@caresphere.in
+[2026-06-07T09:31:30.063Z] Login successful for: admin@caresphere.in, role: ADMIN, ID: 6a253a545e1f668100d6bbe6
+[2026-06-07T09:31:35.986Z] Login attempt for: rajesh.kumar@caresphere.in
+[2026-06-07T09:31:36.136Z] Login successful for: rajesh.kumar@caresphere.in, role: CUSTOMER, ID: 6a253a545e1f668100d6bbe8
+[2026-06-07T09:31:36.183Z] Login attempt for: priya.sharma@caresphere.com
+[2026-06-07T09:31:36.366Z] Login successful for: priya.sharma@caresphere.com, role: CAREGIVER, ID: 6a253a545e1f668100d6bc4d

@@ -4,42 +4,48 @@ import { Navigation } from '@/components/Navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
-import { Heart, Shield, Zap, Globe, Mail, Linkedin, Github, Code, Database, Smartphone, Brain, Palette, Lock, CreditCard } from 'lucide-react';
+import { Heart, Shield, Zap, Globe, Mail, Github, Code, Database, Smartphone, Brain, Palette, Lock, CreditCard } from 'lucide-react';
 
 const teamMembers = [
   {
-    name: 'Aveek',
+    name: 'Aveek Patel',
     role: 'Creator & Developer',
     description: 'Architect of CareSphere - Built the ML Pipeline, auto-ordering script, and Database Architecture. Passionate about using AI to connect families with perfect caregivers.',
     skills: ['MongoDB', 'ML Pipeline', 'Database Design', 'Express.js', 'System Architecture'],
     icon: Database,
     color: 'from-blue-500 to-cyan-500',
-    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face'
+    github: 'https://github.com/Aveek29',
+    email: 'aveekpatel@gmail.com',
+    avatar: 'https://picsum.photos/seed/thomasshelby/400'
   },
   {
-    name: 'Amisha',
+    name: 'Amisha Jindal',
     role: 'Developer',
     description: 'Designed the interactive UI/UX with stunning animations. Expanded the AI Chatbot with comprehensive responses for seamless user support.',
     skills: ['React', 'Framer Motion', 'Tailwind CSS', 'UI/UX Design', 'Chatbot Development'],
     icon: Palette,
     color: 'from-purple-500 to-pink-500',
-    photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&crop=face'
+    github: 'https://github.com/jindalamisha',
+    email: 'amishajindal4@gmail.com',
+    avatar: 'https://picsum.photos/seed/amisha/400'
   },
   {
-    name: 'Anushka',
+    name: 'Anushka Singhal',
     role: 'Developer',
     description: 'Built the secure Authentication system and Payment Gateway logic. Ensured the Admin Panel has complete control over the platform.',
     skills: ['Authentication', 'JWT', 'Payment Gateway', 'Razorpay', 'Admin Systems'],
     icon: Lock,
     color: 'from-green-500 to-emerald-500',
-    photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face'
+    github: 'https://github.com/Anushka1423',
+    email: 'anushka.singhal.cseaiml.2023@miet.ac.in',
+    avatar: 'https://picsum.photos/seed/anushka/400'
   }
 ];
 
 const contributions = [
   { member: 'Aveek', tasks: ['MongoDB Schema Design', 'ML Recommendation Engine', 'Seed Data Script', 'API Architecture'], color: 'from-blue-500 to-cyan-500' },
-  { member: 'Amisha', tasks: ['Interactive UI/UX', 'Framer Motion Animations', 'Responsive Design', 'AI Chatbot Enhancement'], color: 'from-purple-500 to-pink-500' },
-  { member: 'Anushka', tasks: ['JWT Authentication', 'Payment Escrow System', 'Admin Dashboard', 'User Management'], color: 'from-green-500 to-emerald-500' }
+  { member: 'Amisha Jindal', tasks: ['Interactive UI/UX', 'Framer Motion Animations', 'Responsive Design', 'AI Chatbot Enhancement'], color: 'from-purple-500 to-pink-500' },
+  { member: 'Anushka Singhal', tasks: ['JWT Authentication', 'Payment Escrow System', 'Admin Dashboard', 'User Management'], color: 'from-green-500 to-emerald-500' }
 ];
 
 const values = [
@@ -123,7 +129,7 @@ export default function AboutPage() {
                       <div className={`w-32 h-32 mx-auto rounded-full bg-gradient-to-r ${member.color} p-1`}>
                         <div className="w-full h-full rounded-full overflow-hidden bg-white">
                           <img 
-                            src={member.photo} 
+                            src={member.avatar}
                             alt={member.name}
                             className="w-full h-full object-cover"
                           />
@@ -150,14 +156,13 @@ export default function AboutPage() {
                     </div>
                     
                     <div className="flex justify-center gap-4 pt-4 border-t">
-                      <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-blue-600 transition-colors">
-                        <Linkedin className="h-4 w-4" />
-                      </a>
-                      <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-gray-900 transition-colors">
+                      <a href={member.github} target={member.github !== '/' ? '_blank' : undefined} rel={member.github !== '/' ? 'noopener noreferrer' : undefined} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-gray-900 transition-colors">
                         <Github className="h-4 w-4" />
+                        <span>GitHub</span>
                       </a>
-                      <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                      <a href={`mailto:${member.email === '/' ? '' : member.email}`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
                         <Mail className="h-4 w-4" />
+                        <span>Email</span>
                       </a>
                     </div>
                   </CardContent>
@@ -300,9 +305,9 @@ export default function AboutPage() {
               Have questions? We'd love to hear from you!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="mailto:team@trustcare.com" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-primary font-semibold rounded-lg hover:bg-white/90 transition-colors">
+              <a href="mailto:caresphere0029@gmail.com" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-primary font-semibold rounded-lg hover:bg-white/90 transition-colors">
                 <Mail className="h-5 w-5" />
-                team@trustcare.com
+                caresphere0029@gmail.com
               </a>
             </div>
           </motion.div>

@@ -185,11 +185,11 @@ async function seed() {
     await Review.deleteMany({});
     console.log('Cleared existing data');
 
-    const hashedPassword = await bcrypt.hash('password123', 10);
+    const hashedPassword = await bcrypt.hash('caregiver123', 10);
 
     const admin = await User.create({
       name: 'Admin User',
-      email: 'admin@trustcare.com',
+      email: 'admin@caresphere.in',
       password: hashedPassword,
       role: 'ADMIN',
       isVerified: true,
@@ -200,9 +200,11 @@ async function seed() {
     const customers = [];
     for (let i = 0; i < 100; i++) {
       const location = randomChoice(locations);
+      const name = i === 0 ? 'Rajesh Kumar' : `${randomChoice(firstNames)} ${randomChoice(lastNames)}`;
+      const email = i === 0 ? 'rajesh.kumar@caresphere.in' : `customer${i + 1}@example.com`;
       customers.push({
-        name: `${randomChoice(firstNames)} ${randomChoice(lastNames)}`,
-        email: `customer${i + 1}@example.com`,
+        name,
+        email,
         password: hashedPassword,
         role: 'CUSTOMER',
         location: {
@@ -225,9 +227,11 @@ async function seed() {
       const baseRating = Math.random() * 2 + 3;
       const rating = Math.round(baseRating * 10) / 10;
       
+      const name = i === 0 ? 'Priya Sharma' : `${randomChoice(firstNames)} ${randomChoice(lastNames)}`;
+      const email = i === 0 ? 'priya.sharma@caresphere.com' : `caregiver${i + 1}@example.com`;
       const caregiver = {
-        name: `${randomChoice(firstNames)} ${randomChoice(lastNames)}`,
-        email: `caregiver${i + 1}@example.com`,
+        name,
+        email,
         password: hashedPassword,
         role: 'CAREGIVER',
         location: {
@@ -353,9 +357,11 @@ async function seed() {
       .reduce((sum, b) => sum + b.totalAmount, 0);
 
     console.log('\n=== Seed Complete ===');
-    console.log(`Admin: admin@trustcare.com / password123`);
-    console.log(`Customers: 100 (customer1@example.com - customer100@example.com)`);
-    console.log(`Caregivers: 50 (caregiver1@example.com - caregiver50@example.com)`);
+    console.log(`Admin: admin@caresphere.in / caregiver123`);
+    console.log(`Customer: rajesh.kumar@caresphere.in / caregiver123`);
+    console.log(`Caregiver: priya.sharma@caresphere.com / caregiver123`);
+    console.log(`Customers: 100 (rajesh.kumar@caresphere.in, customer2@example.com - customer100@example.com)`);
+    console.log(`Caregivers: 50 (priya.sharma@caresphere.com, caregiver2@example.com - caregiver50@example.com)`);
     console.log(`Bookings: ${createdBookings.length}`);
     console.log(`Payments: ${payments.length}`);
     console.log(`Reviews: ${reviews.length}`);

@@ -181,6 +181,26 @@ router.get('/pending', authenticate, authorize('ADMIN'), async (req: AuthRequest
   }
 });
 
+router.put('/:id/availability', authenticate, authorize('ADMIN'), async (req: AuthRequest, res: Response) => {
+  try {
+    const { isAvailable } = req.body;
+    const profile = await CaregiverProfile.findByIdAndUpdate(
+      req.params.id,
+      { isAvailable },
+      { returnDocument: 'after' }
+    );
+
+    if (!profile) {
+      return res.status(404).json({ message: 'Caregiver profile not found' });
+    }
+
+    res.json(profile);
+  } catch (error) {
+    console.error('Update caregiver availability error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 router.put('/verify/:id', authenticate, authorize('ADMIN'), async (req: AuthRequest, res: Response) => {
   try {
     const { isVerified } = req.body;

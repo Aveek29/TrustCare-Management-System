@@ -225,9 +225,14 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div 
-      className="min-h-screen flex items-center justify-center p-4"
+      className="min-h-screen flex flex-col items-center justify-center p-4"
       style={{ backgroundColor: 'var(--background)' }}
     >
+      <div className="mb-4">
+        <Link href="/" className="text-sm text-primary hover:underline flex items-center gap-1">
+          ← Return to Home
+        </Link>
+      </div>
       <Suspense fallback={
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">

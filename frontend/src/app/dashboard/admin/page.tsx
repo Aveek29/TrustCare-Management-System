@@ -33,6 +33,7 @@ interface Stats {
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [escrowPayments, setEscrowPayments] = useState<any[]>([]);
+  const [pendingCaregivers, setPendingCaregivers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [releasing, setReleasing] = useState<string | null>(null);
 
@@ -42,12 +43,14 @@ export default function AdminDashboard() {
 
   const fetchData = async () => {
     try {
-      const [statsData, escrowData] = await Promise.all([
+      const [statsData, escrowData, pendingData] = await Promise.all([
         fetchAPI('/admin/stats').catch(() => null),
         fetchAPI('/admin/payments/escrow').catch(() => ({ payments: [], totalEscrow: 0 })),
+        fetchAPI('/caregivers/pending').catch(() => []),
       ]);
       setStats(statsData);
       setEscrowPayments(escrowData.payments || []);
+      setPendingCaregivers(Array.isArray(pendingData) ? pendingData : []);
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {
@@ -194,24 +197,29 @@ export default function AdminDashboard() {
         </Card>
       )}
 
-      {(stats?.users?.pendingCaregivers || 0) > 0 && (
+      {pendingCaregivers.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Pending Caregiver Verifications ({stats?.users?.pendingCaregivers || 0})</CardTitle>
+            <CardTitle>Pending Caregiver Verifications ({pendingCaregivers.length})</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {stats?.recentBookings?.filter((_: any, i: number) => i < 3).map((booking: any) => (
-                <div key={booking._id} className="flex items-center justify-between p-4 border rounded-lg">
+              {pendingCaregivers.slice(0, 5).map((profile: any) => (
+                <div key={profile._id} className="flex items-center justify-between p-4 border rounded-lg">
                   <div>
-                    <div className="font-medium">{booking.caregiverId?.name || 'Pending Caregiver'}</div>
-                    <div className="text-sm text-muted-foreground">Awaiting verification</div>
+                    <div className="font-medium">{profile.caregiverId?.name || 'Pending Caregiver'}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {profile.caregiverId?.email} • {profile.experienceYears || 0}yrs exp
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Skills: {(profile.skills || []).slice(0, 3).join(', ')}
+                    </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button size="sm" onClick={() => verifyCaregiver(booking._id, true)}>
+                    <Button size="sm" onClick={() => verifyCaregiver(profile._id, true)}>
                       <Check className="h-4 w-4 mr-1" /> Verify
                     </Button>
-                    <Button size="sm" variant="outline" onClick={() => verifyCaregiver(booking._id, false)}>
+                    <Button size="sm" variant="outline" onClick={() => verifyCaregiver(profile._id, false)}>
                       <X className="h-4 w-4 mr-1" /> Reject
                     </Button>
                   </div>

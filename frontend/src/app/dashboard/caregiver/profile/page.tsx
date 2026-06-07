@@ -111,7 +111,7 @@ export default function CaregiverProfilePage() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Hourly Rate ($)</Label>
+                <Label>Hourly Rate (₹)</Label>
                 <Input
                   type="number"
                   placeholder="25"
@@ -184,7 +184,7 @@ export default function CaregiverProfilePage() {
               <div className="text-muted-foreground">Reviews</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold">${profile.hourlyRate || 0}</div>
+              <div className="text-3xl font-bold">₹{profile.hourlyRate || 0}</div>
               <div className="text-muted-foreground">Hourly Rate</div>
             </div>
           </div>

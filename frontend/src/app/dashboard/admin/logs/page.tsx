@@ -13,6 +13,7 @@ import {
   CreditCard, Star, Eye, Settings, Check
 } from 'lucide-react';
 import { useAuthStore } from '@/store';
+import { fetchAPI } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
@@ -114,10 +115,7 @@ export default function AdminLogsPage() {
 
   const fetchActivityLogs = async (page = 1) => {
     try {
-      const res = await fetch(`/api/logs/activity?page=${page}&limit=20`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      const data = await res.json();
+      const data = await fetchAPI(`/logs/activity?page=${page}&limit=20`);
       if (page === 1) {
         setActivityLogs(data.logs || []);
       } else {
@@ -133,10 +131,7 @@ export default function AdminLogsPage() {
 
   const fetchChatLogs = async (page = 1) => {
     try {
-      const res = await fetch(`/api/logs/chat?page=${page}&limit=10`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      const data = await res.json();
+      const data = await fetchAPI(`/logs/chat?page=${page}&limit=10`);
       if (page === 1) {
         setChatLogs(data.logs || []);
       } else {
@@ -150,10 +145,7 @@ export default function AdminLogsPage() {
 
   const fetchAuthLogs = async (page = 1) => {
     try {
-      const res = await fetch(`/api/logs/auth?page=${page}&limit=10`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      const data = await res.json();
+      const data = await fetchAPI(`/logs/auth?page=${page}&limit=10`);
       if (page === 1) {
         setAuthLogs(data.logs || []);
       } else {
@@ -167,10 +159,7 @@ export default function AdminLogsPage() {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch('/api/logs/activity/stats', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      const data = await res.json();
+      const data = await fetchAPI('/logs/activity/stats');
       setStats(data);
     } catch {
       toast.error('Failed to fetch stats');
@@ -180,15 +169,10 @@ export default function AdminLogsPage() {
   const deleteActivityLog = async (id: string) => {
     if (!confirm('Delete this activity log?')) return;
     try {
-      const res = await fetch(`/api/logs/activity/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (res.ok) {
-        setActivityLogs(activityLogs.filter(log => log._id !== id));
-        toast.success('Activity log deleted');
-        fetchStats();
-      }
+      await fetchAPI(`/logs/activity/${id}`, { method: 'DELETE' });
+      setActivityLogs(activityLogs.filter(log => log._id !== id));
+      toast.success('Activity log deleted');
+      fetchStats();
     } catch {
       toast.error('Failed to delete activity log');
     }
@@ -197,14 +181,9 @@ export default function AdminLogsPage() {
   const deleteChatSession = async (sessionId: string) => {
     if (!confirm('Delete this chat session?')) return;
     try {
-      const res = await fetch(`/api/logs/chat/${sessionId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (res.ok) {
-        setChatLogs(chatLogs.filter(log => log.sessionId !== sessionId));
-        toast.success('Chat session deleted');
-      }
+      await fetchAPI(`/logs/chat/${sessionId}`, { method: 'DELETE' });
+      setChatLogs(chatLogs.filter(log => log.sessionId !== sessionId));
+      toast.success('Chat session deleted');
     } catch {
       toast.error('Failed to delete chat session');
     }

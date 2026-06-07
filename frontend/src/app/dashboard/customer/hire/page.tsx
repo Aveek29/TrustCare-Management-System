@@ -21,7 +21,7 @@ interface Caregiver {
     name: string;
     email: string;
     avatar?: string;
-    location?: string;
+    location?: { lat: number; lng: number; address?: string };
     phone?: string;
   };
   hourlyRate: number;
@@ -217,7 +217,7 @@ export default function CustomerHirePage() {
                         </div>
                         <div>
                           <CardTitle className="text-lg">{caregiver.caregiverId?.name || 'Caregiver'}</CardTitle>
-                          <CardDescription>{caregiver.caregiverId?.location || 'Location not set'}</CardDescription>
+                          <CardDescription>{(typeof caregiver.caregiverId?.location === 'object' ? caregiver.caregiverId?.location?.address : caregiver.caregiverId?.location) || 'Location not set'}</CardDescription>
                         </div>
                       </div>
                       {caregiver.isVerified && (

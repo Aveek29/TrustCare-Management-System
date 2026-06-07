@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: trustcare-backend
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: cd backend && npm ci --ignore-scripts && npm run build
+    startCommand: cd backend && node dist/index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "5000"
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+
+  - type: web
+    name: trustcare-frontend
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: cd frontend && npm ci --ignore-scripts && npm run build
+    startCommand: cd frontend && node .next/standalone/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        value: https://trustcare-backend.onrender.com
+      - key: NEXT_PUBLIC_GOOGLE_CLIENT_ID
+        sync: false

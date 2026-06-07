@@ -118,7 +118,7 @@ export default function CaregiverDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Hourly Rate</p>
-                <p className="text-2xl font-bold">${profile?.hourlyRate || 0}/hr</p>
+                <p className="text-2xl font-bold">₹{profile?.hourlyRate || 0}/hr</p>
               </div>
               <DollarSign className="h-8 w-8 text-primary" />
             </div>
@@ -180,7 +180,7 @@ export default function CaregiverDashboard() {
                     <div>
                       <div className="font-medium">{booking.customerId?.name}</div>
                       <div className="text-sm text-muted-foreground">
-                        {new Date(booking.date).toLocaleString()} • {booking.hours}h • ${booking.totalAmount}
+                        {new Date(booking.date).toLocaleString()} • {booking.hours}h • ₹{booking.totalAmount}
                       </div>
                       {booking.address && (
                         <div className="text-sm text-muted-foreground">{booking.address}</div>

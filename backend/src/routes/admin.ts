@@ -296,6 +296,26 @@ router.get('/users', authenticate, authorize('ADMIN'), async (req: AuthRequest, 
   }
 });
 
+router.put('/users/:id/status', authenticate, authorize('ADMIN'), async (req: AuthRequest, res: Response) => {
+  try {
+    const { isActive } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { isActive },
+      { returnDocument: 'after' }
+    ).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ success: true, user });
+  } catch (error) {
+    console.error('Update user status error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 router.put('/users/:id/verify', authenticate, authorize('ADMIN'), async (req: AuthRequest, res: Response) => {
   try {
     const { isVerified } = req.body;

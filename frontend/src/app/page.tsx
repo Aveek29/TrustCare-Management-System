@@ -256,7 +256,8 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-4 text-center text-sm text-muted-foreground">
-            © 2026 CareSphere. Built by Bermuda Triangle. All rights reserved.
+            <p>Contact us: caresphere0029@gmail.com</p>
+            <p className="mt-1">© 2026 CareSphere. Built by Bermuda Triangle. All rights reserved.</p>
           </div>
         </div>
       </footer>

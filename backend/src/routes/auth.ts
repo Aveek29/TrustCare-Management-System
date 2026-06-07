@@ -126,6 +126,11 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
+    if (user.isActive === false) {
+      console.log(`[${new Date().toISOString()}] Login failed - user deactivated: ${email}`);
+      return res.status(403).json({ message: 'Account has been deactivated. Contact support.' });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       console.log(`[${new Date().toISOString()}] Login failed - invalid password for: ${email}`);
