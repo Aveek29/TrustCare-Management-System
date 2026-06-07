@@ -11,7 +11,7 @@ router.post('/run', async (req: Request, res: Response) => {
     return;
   }
 
-  const scriptsDir = path.join(__dirname, '../../scripts');
+  const scriptsDir = path.join(__dirname, '../scripts');
 
   const run = (script: string): Promise<string> =>
     new Promise((resolve, reject) => {
