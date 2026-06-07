@@ -140,8 +140,8 @@ export default function FacilitiesPage() {
 
       <div className="pt-24 pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
-          <h1 className="text-4xl font-bold">Healthcare Facilities</h1>
-          <p className="text-muted-foreground mt-1">Find hospitals, clinics, and healthcare centers across India — powered by real OpenStreetMap data</p>
+          <h1 className="text-4xl font-bold"> CareSpehre Facilities</h1>
+          <p className="text-muted-foreground mt-1">Find hospitals, clinics, schools, colleges, and Education centers across India — powered by real OpenStreetMap data</p>
         </div>
 
         <div className="mb-6 space-y-4">
@@ -287,7 +287,7 @@ export default function FacilitiesPage() {
             <>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {facilities.map((facility, i) => (
-                    <motion.div key={facility._id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
+                  <motion.div key={facility._id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
                     <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
                       <CardHeader>
                         <div className="flex items-start gap-3">
