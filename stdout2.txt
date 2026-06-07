@@ -31,3 +31,27 @@ MongoDB connected
 [2026-06-07T09:31:36.136Z] Login successful for: rajesh.kumar@caresphere.in, role: CUSTOMER, ID: 6a253a545e1f668100d6bbe8
 [2026-06-07T09:31:36.183Z] Login attempt for: priya.sharma@caresphere.com
 [2026-06-07T09:31:36.366Z] Login successful for: priya.sharma@caresphere.com, role: CAREGIVER, ID: 6a253a545e1f668100d6bc4d
+[2026-06-07T09:33:23.808Z] Login attempt for: rajesh.kumar@caresphere.in
+[2026-06-07T09:33:23.982Z] Login failed - invalid password for: rajesh.kumar@caresphere.in
+[2026-06-07T09:33:32.795Z] Login attempt for: rajesh.kumar@caresphere.in
+[2026-06-07T09:33:32.966Z] Login successful for: rajesh.kumar@caresphere.in, role: CUSTOMER, ID: 6a253a545e1f668100d6bbe8
+[2026-06-07T09:33:40.839Z] Fetching caregivers with filters: [Object: null prototype] {}
+[2026-06-07T09:33:41.305Z] Found 50 caregivers
+[2026-06-07T09:33:41.352Z] Fetching caregivers with filters: [Object: null prototype] {}
+[2026-06-07T09:33:41.986Z] Found 50 caregivers
+[2026-06-07T09:33:45.002Z] Fetching caregivers with filters: [Object: null prototype] {}
+[2026-06-07T09:33:45.471Z] Found 50 caregivers
+[2026-06-07T09:33:45.511Z] Fetching caregivers with filters: [Object: null prototype] {}
+[2026-06-07T09:33:47.048Z] Found 50 caregivers
+[2026-06-07T09:33:48.622Z] Fetching caregivers with filters: [Object: null prototype] {}
+[2026-06-07T09:33:49.145Z] Found 50 caregivers
+[2026-06-07T09:33:49.189Z] Fetching caregivers with filters: [Object: null prototype] {}
+[2026-06-07T09:33:50.622Z] Found 50 caregivers
+[2026-06-07T09:34:19.622Z] Login attempt for: priya.sharma@caresphere.com
+[2026-06-07T09:34:19.866Z] Login successful for: priya.sharma@caresphere.com, role: CAREGIVER, ID: 6a253a545e1f668100d6bc4d
+[2026-06-07T09:34:46.529Z] Login attempt for: admin@caresphere.in
+[2026-06-07T09:34:46.704Z] Login successful for: admin@caresphere.in, role: ADMIN, ID: 6a253a545e1f668100d6bbe6
+[2026-06-07T09:35:49.859Z] Chat message received: what  is newtons firsr law of motion... (lang: en)
+[Chat Config] GROQ_API_KEY present: true, starts with mock: false, length: 56, useGroq: true
+[Chat Debug] useGroq: true, hasKey: true, keyPrefix: gsk_z
+[2026-06-07T09:35:50.296Z] Groq response sent successfully
