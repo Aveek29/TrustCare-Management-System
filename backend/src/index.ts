@@ -13,6 +13,7 @@ import chatRoutes from './routes/chat';
 import paymentRoutes from './routes/payments';
 import adminRoutes from './routes/admin';
 import logsRoutes from './routes/logs';
+import seedRoutes from './routes/seed';
 import { publicRouter as aggregatorPublicRouter } from './modules/healthcareAggregator/routes/publicRoutes';
 import { adminRouter as aggregatorAdminRouter } from './modules/healthcareAggregator/routes/adminRoutes';
 import { initializeQueues } from './modules/healthcareAggregator/queues/queueSetup';
@@ -51,6 +52,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/logs', logsRoutes);
+app.use('/api/seed', seedRoutes);
 
 app.use('/api/aggregator', aggregatorPublicRouter);
 app.use('/api/admin/aggregator', aggregatorAdminRouter);
