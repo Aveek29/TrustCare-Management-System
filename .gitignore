@@ -13,3 +13,4 @@ build/
 *.pem
 coverage/
 .vercel
+.hintrc

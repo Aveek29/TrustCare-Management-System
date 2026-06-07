@@ -38,9 +38,11 @@ function LoginForm() {
           client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'your-google-client-id.apps.googleusercontent.com',
           callback: handleGoogleCallback,
         });
+        const container = document.getElementById('google-signin-button');
+        const pixelWidth = container?.offsetWidth || 380;
         window.google.accounts.id.renderButton(
-          document.getElementById('google-signin-button'),
-          { theme: 'outline', size: 'large', width: '100%' }
+          container,
+          { theme: 'outline', size: 'large', width: pixelWidth }
         );
         setGoogleReady(true);
       }
@@ -125,7 +127,7 @@ function LoginForm() {
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
-          <div id="google-signin-button" className="w-full">
+          <div id="google-signin-button" className="w-full flex justify-center">
             {googleLoading && (
               <Button type="button" variant="outline" className="w-full h-12" disabled>
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -134,7 +136,7 @@ function LoginForm() {
             )}
           </div>
           
-          {(!googleReady || googleLoading) && (
+          {googleReady && !googleLoading && (
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t" style={{ borderColor: 'var(--border)' }} />
