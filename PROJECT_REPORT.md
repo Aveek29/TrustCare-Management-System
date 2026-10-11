@@ -826,6 +826,79 @@ NEXT_PUBLIC_GOOGLE_CLIENT_ID=729970257667-...apps.googleusercontent.com
 
 ---
 
+## 14. ML Capability — Care Recommendation Engine
+
+The ML feature is delivered as an **additive, independently testable module**. It does not
+replace or rewire any existing authentication, booking, payment, review or search logic.
+
+### 14.1 Design
+
+Two stages keep correctness separate from learned ranking:
+
+1. **Hard eligibility constraints (Express, deterministic):** a caregiver must be verified,
+   available, care-type compatible, within the user's budget and within the service radius.
+   These run in the existing backend *before* any model is called.
+2. **ML ranking (private FastAPI service):** a trained Random Forest returns a bounded
+   relevance score (`care-ranker-v1`) per eligible candidate. Express validates returned IDs,
+   score finiteness and range, then orders the results.
+
+If the ML service is unset, unreachable, slow or returns an invalid payload, the backend
+falls back to a deterministic rule-based ranking. The core search/booking flow never blocks.
+
+### 14.2 Components added
+
+| Path | Purpose |
+|---|---|
+| `ml-service/app/` | FastAPI inference service (`/health`, `/ready`, `/predict/rank`) |
+| `ml-service/training/` | Reproducible dataset build, validation, training and evaluation |
+| `ml-service/tests/` | Pytest suite for the inference service |
+| `backend/src/services/recommendationClient.ts` | Timeout-guarded client + deterministic fallback |
+| `backend/src/validators/recommendation.ts` | Zod request/response contracts |
+| `backend/src/routes/recommendations.ts` | `GET /api/recommendations/caregivers`, `/facilities`, `/status` |
+| `backend/test_recommendations.ts` | Fallback + integration smoke tests |
+| `docs/dataset-card.md`, `docs/ml-architecture.md` | Dataset methodology and architecture |
+| `docs/model-evaluation.json` | Measured metrics, split and selected model |
+
+### 14.3 Data and labeling
+
+No public dataset fully matches caregiver preference. The training set is therefore a
+**documented synthetic dataset** of `(user request, candidate)` pairs
+(`data/synthetic/care_pairs.csv`, 12,000 rows, 1,500 query groups) generated from a
+transparent relevance rule with seeded noise. Labels are generated from that rule — they are
+**not** real user feedback. This proves pipeline correctness and ranking skill versus a
+baseline; real interaction data is required for real-world quality claims. Details and
+limitations are in `docs/dataset-card.md`.
+
+### 14.4 Evaluation (measured)
+
+Grouped split by request (`_request_id`) to prevent leakage. Values below are the actual
+output of `ml-service/training/train.py` on the held-out test set.
+
+| Metric | Rule baseline | Random Forest (selected) |
+|---|---|---|
+| Precision@5 | 0.1420 | **0.1447** |
+| Recall@5 | 0.4791 | **0.4949** |
+| NDCG@5 | 0.3599 | **0.3956** |
+| ROC-AUC | 0.6501 | **0.6895** |
+| Inference latency | — | **~0.03 ms/row** |
+
+Logistic Regression (NDCG@5 0.326) and Gradient Boosting (NDCG@5 0.318) were trialled and
+underperformed on the validation split. Returned constraint violations are **0 by design**,
+because hard constraints are enforced before scoring.
+
+### 14.5 Failure handling
+
+Unreachable/timeout → rule-based fallback; missing/corrupt artifact → `/ready` not-ready and
+the rule scorer remains available; invalid model payload → rejected by Zod; no eligible
+candidates → empty result with guidance. All verified by the test suites.
+
+### 14.6 Configuration
+
+Optional backend vars: `ML_SERVICE_URL` (empty disables ML), `ML_SERVICE_TOKEN`,
+`ML_TIMEOUT_MS` (default 800 ms). ML service var: `CARE_RANKER_MODEL_PATH`.
+
+---
+
 ## Appendix A: Project Structure
 
 ```
@@ -836,7 +909,9 @@ root/
 │   │   ├── middleware/
 │   │   │   └── auth.ts           # JWT authenticate + authorize
 │   │   ├── models/               # 7 Mongoose models
-│   │   ├── routes/               # 12 route files
+│   │   ├── routes/               # 13 route files (+ recommendations.ts)
+│   │   ├── services/             # recommendationClient.ts (ML client + fallback)
+│   │   ├── validators/           # recommendation.ts (Zod contracts)
 │   │   ├── scripts/              # seed.ts, seedAggregator.ts
 │   │   ├── modules/
 │   │   │   └── healthcareAggregator/
@@ -849,6 +924,19 @@ root/
 │   │   └── data/                 # Static data files
 │   ├── dist/                     # Compiled JS
 │   └── tsconfig.json
+│
+├── ml-service/                   # New Python ML inference service (additive)
+│   ├── app/                      # FastAPI app, schemas, features, ranker
+│   ├── training/                 # build_dataset, validate_data, train, evaluate
+│   ├── tests/                    # pytest API tests
+│   ├── models/                   # Trained artifact (gitignored)
+│   ├── requirements.txt
+│   └── Dockerfile
+│
+├── data/                         # Training data (gitignored)
+│   ├── raw/ · processed/ · synthetic/
+│
+├── docs/                         # ML dataset card, architecture, metrics
 │
 ├── frontend/
 │   ├── src/

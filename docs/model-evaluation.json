@@ -1,0 +1,56 @@
+{
+  "dataset": "data\\synthetic\\care_pairs.csv",
+  "rows": 12000,
+  "query_groups": 1500,
+  "split": {
+    "train": 9600,
+    "test": 2400
+  },
+  "validation_results": [
+    {
+      "model": "logistic_regression",
+      "precision_at_k": 0.12666666666666668,
+      "recall_at_k": 0.40505555555555556,
+      "ndcg_at_k": 0.3258725849559099,
+      "roc_auc": 0.6475012151473643,
+      "k": 5
+    },
+    {
+      "model": "random_forest",
+      "precision_at_k": 0.128,
+      "recall_at_k": 0.4145,
+      "ndcg_at_k": 0.3346815500469476,
+      "roc_auc": 0.6505465953780213,
+      "k": 5
+    },
+    {
+      "model": "gradient_boosting",
+      "precision_at_k": 0.12533333333333332,
+      "recall_at_k": 0.40449999999999997,
+      "ndcg_at_k": 0.3180261918996377,
+      "roc_auc": 0.6292837258627546,
+      "k": 5
+    }
+  ],
+  "test_results": [
+    {
+      "model": "rule_baseline",
+      "precision_at_k": 0.14200000000000002,
+      "recall_at_k": 0.47905555555555557,
+      "ndcg_at_k": 0.3598500990518588,
+      "roc_auc": 0.6500699483910191,
+      "k": 5
+    },
+    {
+      "model": "random_forest",
+      "precision_at_k": 0.1446666666666667,
+      "recall_at_k": 0.4948888888888889,
+      "ndcg_at_k": 0.39555410052310314,
+      "roc_auc": 0.6895282304316647,
+      "k": 5
+    }
+  ],
+  "selected_model": "random_forest",
+  "model_path": "ml-service\\models\\care_ranker.joblib",
+  "note": "Metrics computed on a synthetic dataset with rule-generated labels. They demonstrate pipeline correctness, not real-world recommendation quality."
+}

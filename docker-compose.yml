@@ -13,10 +13,22 @@ services:
       - MONGODB_URI=${MONGODB_URI:-mongodb://mongo:27017/trustcare}
       - JWT_SECRET=${JWT_SECRET:-}
       - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - ML_SERVICE_URL=${ML_SERVICE_URL:-http://ml:8000}
+      - ML_SERVICE_TOKEN=${ML_SERVICE_TOKEN:-}
+      - ML_TIMEOUT_MS=${ML_TIMEOUT_MS:-800}
     restart: unless-stopped
     depends_on:
       mongo:
         condition: service_healthy
+
+  ml:
+    build:
+      context: ./ml-service
+    ports:
+      - "${ML_PORT:-8000}:8000"
+    environment:
+      - CARE_RANKER_MODEL_PATH=${CARE_RANKER_MODEL_PATH:-models/care_ranker.joblib}
+    restart: unless-stopped
 
   frontend:
     build:

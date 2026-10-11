@@ -10,6 +10,7 @@
     "seed:prod": "node dist/scripts/seed.js",
     "seed-aggregator": "ts-node -r tsconfig-paths/register src/scripts/seedAggregator.ts",
     "seed-aggregator:prod": "node dist/scripts/seedAggregator.js",
+    "test:recommend": "ts-node -r tsconfig-paths/register test_recommendations.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "commonjs",

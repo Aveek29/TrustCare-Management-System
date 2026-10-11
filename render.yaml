@@ -20,6 +20,24 @@ services:
         sync: false
       - key: ALLOWED_ORIGINS
         sync: false
+      - key: ML_SERVICE_URL
+        sync: false
+      - key: ML_SERVICE_TOKEN
+        sync: false
+      - key: ML_TIMEOUT_MS
+        sync: false
+
+  - type: web
+    name: trustcare-ml
+    env: python
+    region: singapore
+    plan: free
+    buildCommand: pip install --disable-pip-version-check -r ml-service/requirements.txt && python ml-service/training/build_dataset.py && python ml-service/training/train.py
+    startCommand: cd ml-service && uvicorn app.main:app --host 0.0.0.0 --port 8000
+    healthCheckPath: /health
+    envVars:
+      - key: CARE_RANKER_MODEL_PATH
+        value: models/care_ranker.joblib
 
   - type: web
     name: trustcare-frontend

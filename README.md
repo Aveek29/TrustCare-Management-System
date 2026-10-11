@@ -57,15 +57,27 @@ The aggregator runs via BullMQ (Redis required) or manually via admin dashboard.
 - **Web Scraping Engine:** Scrapes 17 facility types across Indian cities using OpenStreetMap (Nominatim) and Wikidata (SPARQL) with 1 req/sec rate limiting, deduplication via SHA-256 hashing, auto-generated descriptions, and scheduled BullMQ jobs (discovery/update/cleanup)
 - **Admin Dashboard:** Users, bookings, escrow, logs, aggregator management, disputes
 - **Audit Logs:** Activity, auth, and chat logging with pagination & stats
+- **ML Care Recommendations:** Additive FastAPI inference service (Python) that ranks
+  eligible caregivers via a trained Random Forest (`care-ranker-v1`), with a deterministic
+  rule-based fallback. Hard eligibility constraints (verified, available, within budget,
+  within service area) are enforced by the Express API *before* any ML call. New endpoint:
+  `GET /api/recommendations/caregivers`. See `docs/ml-architecture.md` and
+  `docs/dataset-card.md` for methodology, dataset and measured metrics.
 
 ## Environment Variables
 
-| Backend | Frontend |
-|---|---|
-| `MONGODB_URI` | `NEXT_PUBLIC_API_URL` |
-| `JWT_SECRET` | `NEXT_PUBLIC_GOOGLE_CLIENT_ID` |
-| `GROQ_API_KEY` | |
-| `ALLOWED_ORIGINS` | |
+| Backend | Frontend | ML service |
+|---|---|---|
+| `MONGODB_URI` | `NEXT_PUBLIC_API_URL` | `CARE_RANKER_MODEL_PATH` |
+| `JWT_SECRET` | `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | |
+| `GROQ_API_KEY` | | |
+| `ALLOWED_ORIGINS` | | |
+| `ML_SERVICE_URL` ¹ | | |
+| `ML_SERVICE_TOKEN` ¹ | | |
+| `ML_TIMEOUT_MS` ¹ | | |
+
+¹ Optional — when `ML_SERVICE_URL` is empty the recommendation endpoint falls back to
+deterministic ranking and every existing endpoint is unaffected.
 
 Redis is optional — queues degrade gracefully when unavailable.
 
