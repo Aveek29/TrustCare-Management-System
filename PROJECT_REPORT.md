@@ -410,6 +410,9 @@ Three dedicated log collections:
 | GET | `/api/search/realtime` | No | Hybrid caregiver search |
 | GET | `/api/recommend` | Optional | ML-based recommendations |
 | GET | `/api/recommend/similar/:id` | Yes | Similar caregivers |
+| GET | `/api/recommendations/caregivers` | No | Rank eligible caregivers (ML, fallback-safe) |
+| GET | `/api/recommendations/facilities` | No | Rank nearby facilities (ML, fallback-safe) |
+| GET | `/api/recommendations/status` | No | ML service configuration status |
 
 ### 6.8 Admin
 
