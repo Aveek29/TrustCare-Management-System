@@ -25,6 +25,7 @@
 11. [Deployment](#11-deployment)
 12. [Future Scope](#12-future-scope)
 13. [Limitations & Known Issues](#13-limitations--known-issues)
+14. [ML Capability — Care Recommendation Engine](#14-ml-capability--care-recommendation-engine)
 
 ---
 
@@ -689,7 +690,13 @@ Key queries use MongoDB projections to limit fields returned:
 |---|---|---|
 | Backend API | Render | `https://trustcare-management-system.onrender.com` |
 | Frontend | Vercel | `https://trust-care-management-system.vercel.app` |
+| ML inference (private) | Render web service | `https://trustcare-ml.onrender.com` |
 | Database | MongoDB Atlas | Cloud-hosted M0 free tier |
+
+`render.yaml` is a reproducible blueprint that provisions three services
+(`trustcare-backend`, `trustcare-ml`, `trustcare-frontend`). If the live Render
+service names differ from the blueprint, set `NEXT_PUBLIC_API_URL` (frontend)
+and `ML_SERVICE_URL` (backend) to the actual URLs.
 
 ### 11.2 Environment Variables
 
@@ -701,6 +708,15 @@ JWT_SECRET=<random-64-char>
 GROQ_API_KEY=gsk_...
 ALLOWED_ORIGINS=http://localhost:3000,https://trust-care-management-system.vercel.app
 SEED_KEY=<seed-key>
+ML_SERVICE_URL=https://trustcare-ml.onrender.com   # empty -> rule fallback
+ML_SERVICE_TOKEN=<optional-shared-token>
+ML_TIMEOUT_MS=800
+```
+
+**ML service (Render):**
+```
+PYTHON_VERSION=3.11.9
+CARE_RANKER_MODEL_PATH=models/care_ranker.joblib
 ```
 
 **Frontend (Vercel):**
@@ -711,15 +727,46 @@ NEXT_PUBLIC_GOOGLE_CLIENT_ID=729970257667-...apps.googleusercontent.com
 
 ### 11.3 CI/CD
 
-- **Render**: Auto-deploys from GitHub `main` branch on push
-- **Vercel**: Auto-deploys from GitHub `main` branch on push
-- Manual deploys via `git push` or dashboard redeploy
+- **Render**: Auto-deploys from GitHub `main` on push.
+- **Vercel**: Auto-deploys from GitHub `main` on push.
+- **GitHub Actions** (`.github/workflows/ml.yml`): three jobs run on pushes
+  that touch the ML service or recommendation code, and can be triggered
+  manually (`workflow_dispatch`):
+  1. `ml-service` - build/validate the dataset, train, evaluate, run pytest.
+  2. `backend-recommendations` - `tsc --noEmit` and fallback tests with ML disabled.
+  3. `integration` - start FastAPI in-step and run the backend against the live model.
 
 ### 11.4 Infrastructure as Code
 
-`render.yaml` defines both backend and frontend services with:
-- Build commands, start commands, health check paths
-- Environment variable binding (secrets marked `sync: false`)
+`render.yaml` defines all three services with build commands, start commands,
+health-check paths and environment bindings (secrets marked `sync: false`).
+The frontend build copies `.next/static` and `public/` into the standalone
+output, which is required for Next.js `output: "standalone"` deployments.
+The ML image is also reproducible via `ml-service/Dockerfile` and
+`docker-compose.yml`; both regenerate the dataset and model at build time.
+
+### 11.5 Deployment verification
+
+| Check | Command | Expected |
+|---|---|---|
+| Backend build | `cd backend && npm run build` | exit 0, no TypeScript errors |
+| Frontend build | `cd frontend && npm run build` | exit 0, 26 routes generated |
+| ML unit tests | `cd ml-service && python -m pytest tests -q` | 7 passed |
+| ML service live | `GET :8000/health` | `status: ok`, `modelLoaded: true` |
+| Backend health | `GET :5000/api/health` | `status: ok` |
+| ML configured | `GET :5000/api/recommendations/status` | `mlConfigured: true` |
+| Caregiver ranking | `GET :5000/api/recommendations/caregivers` | `modelVersion: care-ranker-v1`, `fallbackUsed: false` |
+| Fallback path | stop the ML service, repeat | `fallbackUsed: true`, results still returned |
+| Fallback tests | `cd backend && npm run test:recommend` | `ALL RECOMMENDATION TESTS PASSED` |
+
+**Deployment fixes applied:** removed a stray shell fragment from
+`ml-service/requirements.txt` (it broke `pip install -r` and the GitHub Actions
+build); pinned `PYTHON_VERSION` for the Render Python runtime; added the missing
+static-asset copy for the Next.js standalone server; added `pytest` to the ML
+requirements; hardened the integration job to start the ML service in the same
+step as the tests; and changed the ML client to read `process.env` lazily so
+values loaded from `.env` are visible (ES imports are hoisted above
+`dotenv.config()`).
 
 ---
 
@@ -886,6 +933,21 @@ Logistic Regression (NDCG@5 0.326) and Gradient Boosting (NDCG@5 0.318) were tri
 underperformed on the validation split. Returned constraint violations are **0 by design**,
 because hard constraints are enforced before scoring.
 
+Point-wise classification at threshold 0.5 on the same held-out rows:
+
+| Metric | Value |
+|---|---|
+| Accuracy | 0.8775 (majority-class baseline 0.883) |
+| Precision | 0.4716 |
+| Recall | 0.3843 |
+| F1 | 0.4235 |
+| ROC-AUC | 0.6895 |
+| Confusion | TP=108, FP=121, FN=173, TN=1998 |
+
+Because only 11.5% of pairs are relevant, accuracy is dominated by the negative
+class and is **not** the headline result. NDCG@5 and ROC-AUC are reported instead;
+the model is also deliberately recall-leaning via `class_weight="balanced"`.
+
 ### 14.5 Failure handling
 
 Unreachable/timeout → rule-based fallback; missing/corrupt artifact → `/ready` not-ready and
@@ -896,6 +958,31 @@ candidates → empty result with guidance. All verified by the test suites.
 
 Optional backend vars: `ML_SERVICE_URL` (empty disables ML), `ML_SERVICE_TOKEN`,
 `ML_TIMEOUT_MS` (default 800 ms). ML service var: `CARE_RANKER_MODEL_PATH`.
+
+The client reads these lazily at request time, so values loaded from `.env` are
+honoured even though ES imports are hoisted above `dotenv.config()`.
+
+### 14.7 Reproducibility and demo
+
+The full pipeline is reproducible from a clean checkout:
+
+```powershell
+python ml-service/training/build_dataset.py   # seeded synthetic dataset
+python ml-service/training/validate_data.py   # schema / quality checks
+python ml-service/training/train.py           # model comparison + artifact
+python ml-service/training/evaluate.py        # ranking, classification, latency
+python ml-service/demo.py                     # one-command demo for reviewers
+```
+
+`python ml-service/demo.py` prints the dataset summary, model metadata, offline
+metrics, recomputed classification metrics, a side-by-side ML-vs-rule ranking
+example, and (if the service is running) a real `/predict/rank` HTTP response.
+It requires no network access except the optional live check.
+
+Reproducibility controls: fixed seed `42` for dataset generation and splits,
+grouped split by `_request_id` to prevent leakage, pinned dependencies in
+`ml-service/requirements.txt`, and CI that rebuilds and re-evaluates on every
+push. A demo runbook is in `docs/demo-guide.md`.
 
 ---
 
@@ -930,18 +1017,24 @@ root/
 │   ├── training/                 # build_dataset, validate_data, train, evaluate
 │   ├── tests/                    # pytest API tests
 │   ├── models/                   # Trained artifact (gitignored)
+│   ├── demo.py                   # One-command reviewer demo
 │   ├── requirements.txt
 │   └── Dockerfile
 │
 ├── data/                         # Training data (gitignored)
 │   ├── raw/ · processed/ · synthetic/
 │
-├── docs/                         # ML dataset card, architecture, metrics
+├── docs/                         # ML dataset card, architecture, metrics, demo guide
+│   ├── dataset-card.md
+│   ├── ml-architecture.md
+│   ├── model-evaluation.json
+│   ├── research-paper-notes.md
+│   └── demo-guide.md
 │
 ├── frontend/
 │   ├── src/
 │   │   ├── app/                  # Next.js App Router pages
-│   │   ├── components/           # UI components (shadcn-style)
+│   │   ├── components/           # UI components + RecommendedCaregivers.tsx
 │   │   ├── lib/
 │   │   │   └── utils.ts          # fetchAPI, cn()
 │   │   ├── store/
@@ -951,8 +1044,9 @@ root/
 │   ├── public/                   # Static assets
 │   └── tsconfig.json
 │
+├── .github/workflows/ml.yml      # ML + recommendations CI
 ├── docker-compose.yml            # Local MongoDB + Redis
-├── render.yaml                   # Render blueprint
+├── render.yaml                   # Render blueprint (backend + ML + frontend)
 ├── package.json                  # Monorepo scripts
 ├── README.md
 └── PROJECT_REPORT.md             # This file

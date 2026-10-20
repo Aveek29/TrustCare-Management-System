@@ -9,6 +9,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { fetchAPI } from '@/lib/utils';
+import { RecommendedCaregivers } from '@/components/RecommendedCaregivers';
 import { Star, MapPin, Clock, DollarSign, Loader2, Sparkles, ThumbsUp, Search, SlidersHorizontal, X, Filter, Globe, Database, Wifi } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -142,6 +143,8 @@ export default function CaregiversPage() {
             Search local caregivers + AI-scraped results from across the web
           </p>
         </div>
+
+        <RecommendedCaregivers limit={3} careType={filters.skills || undefined} />
 
         <div className="mb-6 space-y-4">
           <div className="flex gap-3">

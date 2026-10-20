@@ -60,9 +60,11 @@ The aggregator runs via BullMQ (Redis required) or manually via admin dashboard.
 - **ML Care Recommendations:** Additive FastAPI inference service (Python) that ranks
   eligible caregivers via a trained Random Forest (`care-ranker-v1`), with a deterministic
   rule-based fallback. Hard eligibility constraints (verified, available, within budget,
-  within service area) are enforced by the Express API *before* any ML call. New endpoint:
-  `GET /api/recommendations/caregivers`. See `docs/ml-architecture.md` and
-  `docs/dataset-card.md` for methodology, dataset and measured metrics.
+  within service area) are enforced by the Express API *before* any ML call. The caregivers
+  page shows a **Recommended for you** section (badge shows the model version, or
+  "Fallback ranking" when the ML service is unavailable). New endpoints:
+  `GET /api/recommendations/caregivers`, `/facilities` and `/status`. See
+  `docs/ml-architecture.md`, `docs/dataset-card.md` and `docs/demo-guide.md`.
 
 ## Environment Variables
 
@@ -81,9 +83,22 @@ deterministic ranking and every existing endpoint is unaffected.
 
 Redis is optional — queues degrade gracefully when unavailable.
 
+## Demo
+
+One-command ML walkthrough (dataset -> model -> metrics -> live ranking):
+
+```powershell
+python ml-service/demo.py
+```
+
+Full presentation runbook (start order, URLs, what to show, troubleshooting):
+`docs/demo-guide.md`.
+
 ## Deployment
 
-Backend on Render, frontend on Vercel. See `render.yaml` for backend config.
+Backend + ML on Render, frontend on Vercel (a three-service Render blueprint is in
+`render.yaml`). See `docs/demo-guide.md` for local startup and `render.yaml` for
+service configuration.
 
 Proxy: `/api/proxy/:path*` → `NEXT_PUBLIC_API_URL/api/:path*` (Next.js rewrite).
 

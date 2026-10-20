@@ -109,6 +109,7 @@ router.get('/caregivers', async (req: AuthRequest, res: Response) => {
       return res.json({
         recommendations: [],
         total: 0,
+        eligible: 0,
         mlConfigured: mlServiceConfigured(),
         message: 'No eligible caregivers. Try widening distance, budget or skill filters.',
       });
@@ -256,6 +257,7 @@ router.get('/facilities', async (req: AuthRequest, res: Response) => {
       return res.json({
         recommendations: [],
         total: 0,
+        eligible: 0,
         mlConfigured: mlServiceConfigured(),
         message: 'No eligible facilities within service distance.',
       });

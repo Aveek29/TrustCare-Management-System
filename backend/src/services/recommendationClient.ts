@@ -25,9 +25,15 @@ export interface RankContext {
   limit?: number;
 }
 
-const ML_SERVICE_URL = process.env.ML_SERVICE_URL || '';
-const ML_SERVICE_TOKEN = process.env.ML_SERVICE_TOKEN || '';
-const ML_TIMEOUT_MS = parseInt(process.env.ML_TIMEOUT_MS || '800', 10);
+// Read configuration lazily. ES imports are hoisted above `dotenv.config()` in
+// index.ts, so reading process.env at module load would miss values loaded from
+// `.env` in local development.
+const getMlServiceUrl = (): string => process.env.ML_SERVICE_URL || '';
+const getMlServiceToken = (): string => process.env.ML_SERVICE_TOKEN || '';
+const getMlTimeoutMs = (): number => {
+  const parsed = parseInt(process.env.ML_TIMEOUT_MS || '800', 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 800;
+};
 
 /**
  * Deterministic rule-based score used as the fallback whenever the ML service is
@@ -76,18 +82,20 @@ export const rankCandidates = async (
     return { modelVersion: 'rule-based-fallback', fallbackUsed: true, scores };
   };
 
-  if (!ML_SERVICE_URL || candidates.length === 0) {
+  const mlServiceUrl = getMlServiceUrl();
+  if (!mlServiceUrl || candidates.length === 0) {
     return fallback();
   }
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), ML_TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), getMlTimeoutMs());
   try {
-    const response = await fetch(`${ML_SERVICE_URL.replace(/\/$/, '')}/predict/rank`, {
+    const token = getMlServiceToken();
+    const response = await fetch(`${mlServiceUrl.replace(/\/$/, '')}/predict/rank`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(ML_SERVICE_TOKEN ? { Authorization: `Bearer ${ML_SERVICE_TOKEN}` } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify({
         careType: context.careType || 'general',
@@ -131,4 +139,4 @@ export const rankCandidates = async (
   }
 };
 
-export const mlServiceConfigured = (): boolean => Boolean(ML_SERVICE_URL);
+export const mlServiceConfigured = (): boolean => Boolean(getMlServiceUrl());
