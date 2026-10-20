@@ -216,6 +216,65 @@ const MOCK_RESPONSES: Record<string, Record<string, string[]>> = {
   }
 };
 
+// Groq models can be deprecated. Try the configured model first, then known-good
+// fallbacks, so a model retirement degrades gracefully instead of silently
+// falling back to mock replies.
+const DEFAULT_GROQ_MODELS = ['openai/gpt-oss-120b', 'qwen/qwen3.8-27b', 'openai/gpt-oss-20b'];
+
+const getGroqModels = (): string[] => {
+  const configured = (process.env.GROQ_MODEL || '').trim();
+  return [...new Set([configured, ...DEFAULT_GROQ_MODELS].filter(Boolean))];
+};
+
+const callGroq = (apiKey: string, model: string, messages: unknown[]): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const data = JSON.stringify({
+      model,
+      messages,
+      temperature: 0.7,
+      max_tokens: 600,
+    });
+
+    const request = https.request(
+      {
+        hostname: 'api.groq.com',
+        path: '/openai/v1/chat/completions',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + apiKey,
+        },
+      },
+      (res) => {
+        let body = '';
+        res.on('data', (chunk) => (body += chunk));
+        res.on('end', () => {
+          try {
+            const json = JSON.parse(body);
+            if (json.error) {
+              reject(new Error(json.error.message || 'Groq API error'));
+              return;
+            }
+            const choice = json.choices && json.choices[0];
+            const content = choice?.message?.content;
+            if (content && content.trim()) {
+              resolve(content);
+            } else {
+              reject(new Error(`Empty Groq response (finish=${choice?.finish_reason || 'unknown'})`));
+            }
+          } catch {
+            reject(new Error('Failed to parse Groq response'));
+          }
+        });
+      }
+    );
+
+    request.on('error', reject);
+    request.setTimeout(25000, () => request.destroy(new Error('Groq request timed out')));
+    request.write(data);
+    request.end();
+  });
+
 router.post('/', async (req: Request, res: Response) => {
   const language = req.body.language || 'en';
   try {
@@ -236,63 +295,24 @@ router.post('/', async (req: Request, res: Response) => {
     const { key: groqApiKey, shouldUse: useGroq } = getGroqConfig();
     console.log(`[Chat Debug] useGroq: ${useGroq}, hasKey: ${!!groqApiKey}, keyPrefix: ${groqApiKey?.substring(0, 5)}`);
     if (useGroq && groqApiKey) {
-      try {
-        const systemPrompt = langConfig.system
-          .replace('{page}', currentPage)
-          .replace('{role}', userRole);
+      const systemPrompt = langConfig.system
+        .replace('{page}', currentPage)
+        .replace('{role}', userRole);
 
-        const messages = [
-          { role: 'system', content: systemPrompt },
-          ...(history || []).slice(-10),
-          { role: 'user', content: message }
-        ];
+      const messages = [
+        { role: 'system', content: systemPrompt },
+        ...(history || []).slice(-10),
+        { role: 'user', content: message },
+      ];
 
-        const response = await new Promise<string>((resolve, reject) => {
-          const data = JSON.stringify({
-            model: 'llama-3.3-70b-versatile',
-            messages,
-            temperature: 0.7,
-            max_tokens: 500
-          });
-
-          const req = https.request({
-            hostname: 'api.groq.com',
-            path: '/openai/v1/chat/completions',
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + groqApiKey
-            }
-          }, (res) => {
-            let body = '';
-            res.on('data', (chunk) => body += chunk);
-            res.on('end', () => {
-              try {
-                const json = JSON.parse(body);
-                if (json.error) {
-                  reject(new Error(json.error.message || 'Groq API error'));
-                  return;
-                }
-                if (json.choices && json.choices[0] && json.choices[0].message) {
-                  resolve(json.choices[0].message.content);
-                } else {
-                  reject(new Error('Invalid response format from Groq'));
-                }
-              } catch (e) {
-                reject(new Error('Failed to parse Groq response: ' + body));
-              }
-            });
-          });
-
-          req.on('error', reject);
-          req.write(data);
-          req.end();
-        });
-
-        reply = response;
-        console.log(`[${new Date().toISOString()}] Groq response sent successfully`);
-      } catch (groqError: any) {
-        console.error('Groq error, falling back to mock:', groqError.message);
+      for (const model of getGroqModels()) {
+        try {
+          reply = await callGroq(groqApiKey, model, messages);
+          console.log(`[${new Date().toISOString()}] Groq response via ${model}`);
+          break;
+        } catch (groqError: any) {
+          console.error(`Groq model ${model} failed: ${groqError.message}`);
+        }
       }
     }
 
