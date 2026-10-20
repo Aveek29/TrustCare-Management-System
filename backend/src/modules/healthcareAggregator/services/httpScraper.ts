@@ -249,9 +249,9 @@ function osmToFacility(item: any, sourceType: string, sourceName: string): Scrap
     name,
     address: addr,
     coordinates: { lat: isNaN(lat) ? 0 : lat, lng: isNaN(lng) ? 0 : lng },
-    phone: '',
-    email: '',
-    website: '',
+    phone: (item.extra?.phone || item.phone || '') as string,
+    email: (item.extra?.email || item.email || '') as string,
+    website: (item.website || item.url || item.extra?.website || '') as string,
     facilityType,
     description: generateDescription(name, facilityType, city, services, specialities),
     services,
@@ -274,8 +274,9 @@ function wikidataToFacility(item: any, sourceName: string): ScrapedFacility | nu
   const coordMatch = coordStr.match(/Point\(([-\d.]+)\s+([-\d.]+)\)/);
   if (coordMatch) { lng = parseFloat(coordMatch[1]); lat = parseFloat(coordMatch[2]); }
 
-  const website = item.website?.value || '';
-  const phone = item.phone?.value || '';
+  const website = item.website?.value || item['contact:website']?.value || '';
+  const phone = item.phone?.value || item['contact:phone']?.value || item.telephone?.value || '';
+  const email = item.email?.value || item['contact:email']?.value || '';
   const city = item.cityLabel?.value || '';
   const state = item.stateLabel?.value || '';
 
@@ -284,7 +285,7 @@ function wikidataToFacility(item: any, sourceName: string): ScrapedFacility | nu
     address: { street: '', city, state, zip: '', full: [name, city, state].filter(Boolean).join(', ') },
     coordinates: { lat, lng },
     phone,
-    email: '',
+    email,
     website,
     facilityType: 'hospital',
     description: generateDescription(name, 'hospital', city, [], []),
